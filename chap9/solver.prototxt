@@ -1,0 +1,15 @@
+net: "./train_val.prototxt"
+test_iter: 2000
+test_interval: 500
+base_lr: 0.01
+lr_policy: "step"
+gamma: 0.707
+stepsize: 5000
+display: 100
+max_iter: 20000
+momentum: 0.85
+weight_decay: 0.0005
+snapshot: 5000
+snapshot_prefix: "./chap9_example"
+solver_mode: GPU
+type: "Nesterov"
