@@ -1,2 +1,4 @@
-Example codes for the book
-All codes are compatible with Python2
+example codes for the book  
+
+
+compatible with Python2
