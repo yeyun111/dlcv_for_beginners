@@ -1,2 +1,2 @@
-# dlcv_for_beginners
-example codes for the book
+Example codes for the book
+All codes are compatible with Python2
