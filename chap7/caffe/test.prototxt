@@ -1,0 +1,36 @@
+name: "SimpleMLP"
+input: "data"
+input_shape {
+  dim: 1
+  dim: 2
+}
+layer {
+  name: "fc1"
+  type: "InnerProduct"
+  bottom: "data"
+  top: "fc1"
+  inner_product_param {
+    num_output: 2
+  }
+}
+layer {
+  name: "sigmoid1"
+  type: "Sigmoid"
+  bottom: "fc1"
+  top: "sigmoid1"
+}
+layer {
+  name: "fc2"
+  type: "InnerProduct"
+  bottom: "sigmoid1"
+  top: "fc2"
+  inner_product_param {
+    num_output: 2
+  }
+}
+layer {
+  name: "softmax"
+  type: "Softmax"
+  bottom: "fc2"
+  top: "prob"
+}
