@@ -3,15 +3,14 @@ import sys
 import datetime
 import cv2
 
-from multiprocessing import Process
+from multiprocessing import Process, cpu_count
 
 import numpy as np
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 
 H_IMG, W_IMG = 100, 100
 SAMPLE_SIZE = 70000
 SAMPLES_DIR = 'samples'
-N_PROCS = 2
 
 def make_noise(index):
     h = np.random.randint(1, H_IMG)
@@ -21,7 +20,7 @@ def make_noise(index):
     fx = float(w) / float(W_IMG)
     fy = float(h) / float(H_IMG)
     filename = '{}/{:0>5d}_{}_{}.jpg'.format(SAMPLES_DIR, index, fx, fy)
-    pyplot.imsave(filename, noisy_img, cmap='gray')
+    plt.imsave(filename, noisy_img, cmap='gray')
 
 def make_noises(i0, i1):
     np.random.seed(datetime.datetime.now().microsecond)
@@ -33,10 +32,12 @@ def make_noises(i0, i1):
 def main():
     cmd = 'mkdir -p {}'.format(SAMPLES_DIR)
     os.system(cmd)
+    n_procs = cpu_count()
 
-    length = float(SAMPLE_SIZE)/float(N_PROCS)
-    indices = [int(round(i * length)) for i in range(N_PROCS + 1)]
-    processes = [Process(target=make_noises, args=(indices[i], indices[i+1])) for i in range(N_PROCS)]
+    print('Making noises with {} processes ...'.format(n_procs))
+    length = float(SAMPLE_SIZE)/float(n_procs)
+    indices = [int(round(i * length)) for i in range(n_procs + 1)]
+    processes = [Process(target=make_noises, args=(indices[i], indices[i+1])) for i in range(n_procs)]
 
     for p in processes:
         p.start()
@@ -48,4 +49,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

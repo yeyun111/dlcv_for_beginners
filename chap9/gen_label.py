@@ -1,5 +1,4 @@
 import os
-import numpy
 
 filename2score = lambda x: x[:x.rfind('.')].split('_')[-2:]
 
@@ -21,4 +20,3 @@ with open('test.txt', 'w') as f_test_txt:
     for filename in filenames[60000:]:
         line = 'samples/{}\n'.format(filename)
         f_test_txt.write(line)
-

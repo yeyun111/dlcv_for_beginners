@@ -1,7 +1,7 @@
 name: "RegressionExample"
 input: "data"
 input_shape {
-  dim: 1
+  dim: 100
   dim: 1
   dim: 100
   dim: 100

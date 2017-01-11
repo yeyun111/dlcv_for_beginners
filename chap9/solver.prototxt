@@ -1,15 +1,15 @@
 net: "./train_val.prototxt"
-test_iter: 2000
-test_interval: 500
+test_iter: 200
+test_interval: 1000
 base_lr: 0.01
 lr_policy: "step"
 gamma: 0.707
-stepsize: 5000
+stepsize: 2000
 display: 100
-max_iter: 20000
-momentum: 0.85
-weight_decay: 0.0005
-snapshot: 5000
-snapshot_prefix: "./chap9_example"
+max_iter: 10000
+momentum: 0.9
+weight_decay: 0.00001
+snapshot_prefix: "./freq_regression"
 solver_mode: GPU
 type: "Nesterov"
+
