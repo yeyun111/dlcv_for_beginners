@@ -1,13 +1,13 @@
 ## Prepare Data
-run gen_data.py to generate data in pickle
+运行 *gen_data.py* 产生随机数据并用pickle导出为文件
 
 ## MXNet
-run *simple_mlp.py* in mxnet directory to train & visualize result
+在mxnet文件夹下运行 *simple_mlp.py* 训练模型并进行结果可视化
 
 ## Caffe
 ### step 1
-run *gen_hdf5.py* to convert data to hdf5 format
+在caffe文件夹下运行 *gen_hdf5.py* 将数据转换为HDF5格式
 ### step 2
-run *simple_mlp_train.py* to train the model
+运行 *simple_mlp_train.py* 训练模型
 ### step 3
-run *simple_mlp_test.py* to do inference & visualize the result
+运行 *simple_mlp_test.py* 测试模型及可视化

@@ -1,6 +1,6 @@
 ## Prepare Data
 ### step 1
-run convert_mnist.py to generate jpg images
+运行 *convert_mnist.py* 将pickle格式的数据转换为图片
 ### step 2
 > python gen_caffe_imglist.py mnist/train train.txt
 
@@ -8,7 +8,7 @@ run convert_mnist.py to generate jpg images
 
 > python gen_caffe_imglist.py mnist/test test.txt
 
-to get the image list for lmdb generation. Then run 
+得到图片的列表，然后运行： 
 > /path/to/caffe/built/tools/convert_imageset ./ train.txt train_lmdb --gray --shuffle
 
 > /path/to/caffe/built/tools/convert_imageset ./ val.txt val_lmdb --gray --shuffle
@@ -16,7 +16,7 @@ to get the image list for lmdb generation. Then run
 > /path/to/caffe/built/tools/convert_imageset ./ test.txt test_lmdb --gray --shuffle
 
 
-to generate lmdb.
+产生lmdb
 
 ### step 3
 > python gen_mxnet_imglist.py mnist/train train.lst
@@ -25,7 +25,7 @@ to generate lmdb.
 
 > python gen_mxnet_imglist.py mnist/test test.lst
 
-to generate image list for ImageRecordio. Then run 
+用于产生图片的列表，然后运行
 
 > /path/to/mxnet/bin/im2rec train.lst ./ train.rec color=0
 
@@ -33,24 +33,26 @@ to generate image list for ImageRecordio. Then run
 
 > /path/to/mxnet/bin/im2rec test.lst ./ test.rec color=0
 
-to generate ImageRecordio files.
+产生ImageRecordio文件
+
 
 ## MXNet
-run *train_lenet5.py* in mxnet directory to train model.
 
-run *score_model.py* to score the model on test dataset.
+运行 *train_lenet5.py* 训练模型
 
-run *benchmark_model.py* to benchmark model's performance.
+运行 *score_model.py* 在测试集上评估模型
 
-run *recognize_digit.py* followed by path to handwritten digits images to recognized digits.
+运行 *benchmark_model.py* 测试模型性能
+
+运行 *recognize_digit.py* 跟图片路径作为参数用于手写数字图片识别
 
 ## Caffe
-*lenet_train_val.prototxt* & *lenet_train_val_aug.prototxt* are the model definition for training original dataset and augmented dataset respectively.
+*lenet_train_val.prototxt* & *lenet_train_val_aug.prototxt* 分别是用原始数据和增加后数据训练模型的网络结构和数据定义文件
 
-*lenet_solver.prototxt* & *lenet_solver_aug.prototxt* are the solver for training original dataset and augmented dataset respectively.
+*lenet_solver.prototxt* & *lenet_solver_aug.prototxt* 分别是训练原始数据和增加后数据的solver文件
 
-*lenet_test.prototxt* is the model definition for testing on test dataset.
+*lenet_test.prototxt* 是用于在测试数据上测试模型的网络结构和数据源定义文件
 
-*lenet.prototxt* is the model definition for deployment and benchmark.
+*lenet.prototxt* 是用于部署的网络结构定义文件
 
-run *recognize_digit.py* followed by test image list to handwritten digits images to recognized digits.
+运行 *recognize_digit.py* 接测试文件的列表用来演示手写数字图片识别
