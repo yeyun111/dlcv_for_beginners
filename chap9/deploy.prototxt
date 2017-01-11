@@ -1,10 +1,16 @@
 name: "RegressionExample"
-input: "data"
-input_shape {
-  dim: 100
-  dim: 1
-  dim: 100
-  dim: 100
+layer {
+  name: "data"
+  type: "Input"
+  top: "data"
+  input_param { 
+    shape: { 
+      dim: 100
+      dim: 1 
+      dim: 100
+      dim: 100
+    } 
+  }
 }
 layer {
   name: "conv1"

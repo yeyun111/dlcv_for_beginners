@@ -1,8 +1,11 @@
 import sys
-sys.path.append('/opt/caffe/python')
+sys.path.append('/path/to/caffe/python')
 import numpy as np
 import cv2
 import caffe
+
+MEAN = 128
+SCALE = 0.00390625
 
 imglist = sys.argv[1]
 
@@ -16,8 +19,8 @@ with open(imglist, 'r') as f:
     while line:
         imgpath, label = line.split()
         line = f.readline()
-        image = cv2.imread(imgpath, cv2.IMREAD_GRAYSCALE).astype(np.float) - 128
-        image *= 0.00390625
+        image = cv2.imread(imgpath, cv2.IMREAD_GRAYSCALE).astype(np.float) - MEAN
+        image *= SCALE
         net.blobs['data'].data[...] = image
         output = net.forward()
         pred_label = np.argmax(output['prob'][0])

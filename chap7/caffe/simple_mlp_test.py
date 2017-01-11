@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-sys.path.append('/opt/caffe/python')
+sys.path.append('/path/to/caffe/python')
 import caffe
 
 net = caffe.Net('test.prototxt', 'simple_mlp_iter_2000.caffemodel', caffe.TEST)

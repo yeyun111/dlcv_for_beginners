@@ -12,4 +12,3 @@ weight_decay: 0.00001
 snapshot_prefix: "./freq_regression"
 solver_mode: GPU
 type: "Nesterov"
-

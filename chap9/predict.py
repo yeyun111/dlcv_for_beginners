@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-sys.path.append('/opt/caffe/python')
+sys.path.append('/path/to/caffe/python')
 import caffe
 
 WEIGHTS_FILE = 'freq_regression_iter_10000.caffemodel'
