@@ -34,7 +34,7 @@ with open(image_list, 'r') as f:
             freqs = output['pred']
 
             for filename, (fx, fy) in zip(filenames, freqs):
-                print('Predicted frequencies for {} is {} and {}'.format(filename, fx, fy))
+                print('Predicted frequencies for {} is {:.2f} and {:.2f}'.format(filename, fx, fy))
 
             i = 0
             filenames = []
