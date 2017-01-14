@@ -1,6 +1,9 @@
 ## Prepare Data
 ### step 1
-运行 *convert_mnist.py* 将pickle格式的数据转换为图片
+> ./download_mnist.sh
+
+下载mnist.pkl.gz，然后运行 *convert_mnist.py* 将pickle格式的数据转换为图片
+
 ### step 2
 > python gen_caffe_imglist.py mnist/train train.txt
 
