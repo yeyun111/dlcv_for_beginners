@@ -2,9 +2,9 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-sys.path.append('/opt/caffe/python')
+sys.path.append('/path/to/caffe/python')
 import caffe
-import os
+
 WEIGHTS_FILE = 'food_resnet-10_iter_10000.caffemodel'
 DEPLOY_FILE = 'food_resnet_10_cvgj_deploy.prototxt'
 FEATURE_MAPS = 'layer_512_1_sum'
@@ -19,6 +19,7 @@ transformer.set_raw_scale('data', 255)
 transformer.set_channel_swap('data', (2, 1, 0))
 
 image_list = sys.argv[1]
+
 cmap = plt.get_cmap('jet')
 with open(image_list, 'r') as f:
     for line in f.readlines():
@@ -54,6 +55,5 @@ with open(image_list, 'r') as f:
         vis_img = np.hstack([image, activation_map, overlay_img])
         vis_img = cv2.cvtColor(vis_img, cv2.COLOR_RGB2BGR)
 
-        #cv2.imshow('Activation Map Visualization', vis_img)
-        cv2.imwrite('act_map/{}'.format(filepath.replace(os.sep, '_')), vis_img)
-        #cv2.waitKey()
+        cv2.imshow('Activation Map Visualization', vis_img)
+        cv2.waitKey()

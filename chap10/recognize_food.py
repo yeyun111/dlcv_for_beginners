@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-sys.path.append('/opt/caffe/python')
+sys.path.append('/path/to/caffe/python')
 import caffe
 
 WEIGHTS_FILE = 'food_resnet-10_iter_10000.caffemodel'
@@ -17,7 +17,7 @@ transformer.set_channel_swap('data', (2, 1, 0))
 image_list = sys.argv[1]
 result_list = '{}_results.txt'.format(image_list[:image_list.rfind('.')])
 
-foods = open('data/keywords.txt', 'rb').read().split()
+foods = open('/path/to/keywords.txt', 'rb').read().split()
 with open(image_list, 'r') as f, open(result_list, 'w') as f_ret:
     for line in f.readlines():
         filepath, label = line.split()
