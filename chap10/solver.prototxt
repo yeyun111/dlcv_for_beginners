@@ -1,0 +1,15 @@
+net: "food_resnet_10_cvgj_finetune_val.prototxt"
+test_iter: 300
+test_interval: 1000
+base_lr: 0.1
+display: 100
+max_iter: 20000
+lr_policy: "fixed"
+momentum: 0.9
+delta: 1e-8
+weight_decay: 0.0001
+snapshot: 10000
+snapshot_prefix: "food_resnet-10"
+test_initialization: false
+solver_mode: GPU
+type: "AdaDelta"
