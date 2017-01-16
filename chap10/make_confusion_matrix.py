@@ -1,4 +1,3 @@
-import sys
 import itertools
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,7 +33,7 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
-result_filepath = sys.argv[1]
+result_filepath = 'val_results.txt'
 
 true_labels = []
 pred_labels = []
