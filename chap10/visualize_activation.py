@@ -34,10 +34,12 @@ with open(image_list, 'r') as f:
         feature_maps = net.blobs[FEATURE_MAPS].data[0]
         fc_params = net.params[FC_LAYER]
         fc_w = fc_params[0].data[pred]
+        #fc_b = fc_params[1].data[pred]
 
         activation_map = np.zeros_like(feature_maps[0])
         for feature_map, w in zip(feature_maps, fc_w):
             activation_map += feature_map * w
+        #activation_map += fc_b
 
         # Visualize as
         # left: original image
