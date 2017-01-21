@@ -25,6 +25,10 @@ with open(image_list, 'r') as f:
     for line in f.readlines():
         filepath = line.split()[0]
         image = caffe.io.load_image(filepath)
+        # uncomment the following 2 lines to forward with
+        # original image size and corresponding activation maps
+        #transformer.inputs['data'] = (1, 3, image.shape[0], image.shape[1])
+        #net.blobs['data'].reshape(1, 3, image.shape[0], image.shape[1])
         transformed_image = transformer.preprocess('data', image)
         net.blobs['data'].data[...] = transformed_image
 
