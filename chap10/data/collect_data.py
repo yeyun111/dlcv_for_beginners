@@ -4,9 +4,9 @@ import urllib
 from multiprocessing import Process
 
 SUPPORTED_FORMATS = ['jpg', 'png', 'jpeg']
-URL_TEMPLATE = r'http://image.baidu.com/search/flip?tn=baiduimage&ie=utf-8&word={keyword}&pn={index}'
+URL_TEMPLATE = r'http://image.b***u.com/search/flip?tn=b***uimage&ie=utf-8&word={keyword}&pn={index}'
 
-def download_images_from_baidu(dir_name, keyword, start_index, end_index):
+def download_images_from_b***u(dir_name, keyword, start_index, end_index):
     index = start_index
     while index < end_index:
         url = URL_TEMPLATE.format(keyword=keyword, index=index)
@@ -58,7 +58,7 @@ def download_images(keywords, num_per_kw, procs_per_kw):
             end_index = start_index + num_per_proc - 1
             args_list.append((dir_name, keyword, start_index, end_index))
 
-    processes = [Process(target=download_images_from_baidu, args=x) for x in args_list]
+    processes = [Process(target=download_images_from_b***u, args=x) for x in args_list]
 
     print('Starting to download images with {} processes ...'.format(len(processes)))
 
