@@ -4,6 +4,9 @@
 
 下载mnist.pkl.gz，然后运行 *convert_mnist.py* 将pickle格式的数据转换为图片
 
+如果原链接无法下载可以到下面云盘地址下载：
+https://share.weiyun.com/cb70bb2ca8b1d1b4d3570dc676e7bc76
+
 ### step 2
 > python gen_caffe_imglist.py mnist/train train.txt
 
