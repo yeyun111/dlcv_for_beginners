@@ -31,4 +31,4 @@
 
 ## 预训练模型下载链接
 
-https://share.weiyun.com/4b9340a51af6473d6de46352f450c46f
+http://pan.baidu.com/s/1qYk5MDQ

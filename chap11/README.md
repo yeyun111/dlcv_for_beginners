@@ -36,4 +36,4 @@ https://arxiv.org/pdf/1512.02325v5.pdf
 
 ## 预训练模型下载链接
 vgg16_reduced.zip & ssd_300_vgg16_reduced_voc0712_trainval.zip  
-https://share.weiyun.com/ec4ff8bad1207dc6f768d8bb3ecc15e4
+http://pan.baidu.com/s/1sli1TE1
