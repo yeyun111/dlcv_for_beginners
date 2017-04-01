@@ -2,7 +2,7 @@ import sys
 from operator import itemgetter
 import numpy
 from matplotlib import pyplot
-sys.path.append('/opt/caffe/python')
+sys.path.append('/path/to/caffe/python')
 import caffe
 
 
@@ -73,7 +73,7 @@ def visualize_attack(title, original_img, attack_img, original_preds, attacked_p
             x_loc = bar.get_x() + bar.get_width()
             y_loc = k - i - 1
             label = labels[preds[i][0]]
-            ax.text(x_loc, y_loc, '{}: {:.2g}'.format(label, preds[i][1]))
+            ax.text(x_loc, y_loc, '{}: {:.2f}%'.format(label, preds[i][1]*100))
 
     pyplot.subplot(232)
     pyplot.axis('off')
@@ -111,14 +111,28 @@ if __name__ == '__main__':
 
     examples = [
         (None, 1.0),    # make adversarial example to reduce the predicted probability
-        (296, 1.0),     # make adversarial example to increase the probability of ice bear(296)
-        (9, 1.0),     # make adversarial example to increase the probability of doormat(9)
-        (9, 2.0)      # make adversarial example to increase the probability of doormat(9) with stronger noise
+        (296, 1.0),     # make adversarial example toward ice bear(296)
+        (9, 1.0),       # make adversarial example toward ostrich(9)
+        (9, 2.0),       # make adversarial example toward ostrich(9) with stronger noise
+        (9, 6.0),       # make adversarial example toward ostrich(9) with very strong noise
+        (9, 18.0),      # make adversarial example toward ostrich(9) with too strong noise
+        (752, 1.0),     # make adversarial example toward racket(752)
+        (752, 2.0),     # make adversarial example toward racket(752) with stronger noise
+        (752, 6.0),     # make adversarial example toward racket(752) with very strong noise
+        (752, 18.0),    # make adversarial example toward racket(752) with too strong noise
     ]
 
     for i, (label_index, epsilon) in enumerate(examples):
         attack_img, original_preds, attacked_preds = \
             make_n_test_adversarial_example(img, net, transformer, epsilon, label_index=label_index)
         visualize_attack('example{}'.format(i), img, attack_img, original_preds, attacked_preds, labels)
+
+    # try to make adversarial example toward racket(752) with epsilon=0.1, iterate 10 times
+    attack_img, original_preds, attacked_preds = \
+        make_n_test_adversarial_example(img, net, transformer, 0.1, label_index=752)
+    for i in range(9):
+        attack_img, _, attacked_preds = \
+            make_n_test_adversarial_example(attack_img, net, transformer, 0.1, label_index=752)
+    visualize_attack('racket_iterative'.format(i), img, attack_img, original_preds, attacked_preds, labels)
 
     pyplot.show()
