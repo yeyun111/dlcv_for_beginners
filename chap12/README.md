@@ -30,5 +30,6 @@
 进行结果可视化
 
 ## 预训练模型下载链接
-
+https://github.com/frombeijingwithlove/dlcv_book_pretrained_caffe_models/blob/master/mnist_siamese_iter_20000.caffemodel
+或  
 http://pan.baidu.com/s/1qYk5MDQ

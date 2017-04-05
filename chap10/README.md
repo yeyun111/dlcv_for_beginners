@@ -4,5 +4,7 @@
 
 具体用法参考本书第十章内容。
 
-书中例子对应的模型可以在下面地址下载：  
+书中例子对应的预训练模型可以在下面地址下载：  
+https://github.com/frombeijingwithlove/dlcv_book_pretrained_caffe_models/blob/master/food_resnet-10_iter_10000.caffemodel  
+或  
 http://pan.baidu.com/s/1jHRLsLw
