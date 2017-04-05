@@ -1,3 +1,7 @@
+## Generating Adversarial Examples
+Blog: 
+[用Caffe生成对抗样本](https://zhuanlan.zhihu.com/p/26122612)
+
 ## step 1
 > ./download-squeezenet-v1.0-weights.sh  
 
