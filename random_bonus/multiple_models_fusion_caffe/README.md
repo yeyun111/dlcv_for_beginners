@@ -1,6 +1,6 @@
 ## Caffe中进行模型融合
 Blog: 
-[用Caffe生成对抗样本](https://zhuanlan.zhihu.com/p/26122612)
+[在Caffe中实现模型融合](http://www.cnblogs.com/frombeijingwithlove/p/6683476.html)
 
 ## 从头训练两个不同模型
 ### step 1
