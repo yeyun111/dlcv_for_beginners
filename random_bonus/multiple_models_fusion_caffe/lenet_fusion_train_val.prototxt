@@ -1,0 +1,275 @@
+name: "LeNet"
+layer {
+  name: "mnist"
+  type: "ImageData"
+  top: "data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    mean_value: 128
+    scale: 0.00390625
+  }
+  image_data_param {
+    source: "train_all.txt"
+    is_color: false
+    batch_size: 50
+  }
+}
+layer {
+  name: "mnist"
+  type: "ImageData"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    mean_value: 128
+    scale: 0.00390625
+  }
+  image_data_param {
+    source: "val_all.txt"
+    is_color: false
+    batch_size: 20
+  }
+}
+layer {
+  name: "odd/conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "odd/conv1"
+  param {
+    lr_mult: 0
+  }
+  param {
+    lr_mult: 0
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "odd/pool1"
+  type: "Pooling"
+  bottom: "odd/conv1"
+  top: "odd/pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "odd/conv2"
+  type: "Convolution"
+  bottom: "odd/pool1"
+  top: "odd/conv2"
+  param {
+    lr_mult: 0
+  }
+  param {
+    lr_mult: 0
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "odd/pool2"
+  type: "Pooling"
+  bottom: "odd/conv2"
+  top: "odd/pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "odd/ip1"
+  type: "InnerProduct"
+  bottom: "odd/pool2"
+  top: "odd/ip1"
+  param {
+    lr_mult: 0
+  }
+  param {
+    lr_mult: 0
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "odd/relu1"
+  type: "ReLU"
+  bottom: "odd/ip1"
+  top: "odd/ip1"
+}
+layer {
+  name: "even/conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "even/conv1"
+  param {
+    lr_mult: 0
+  }
+  param {
+    lr_mult: 0
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "even/pool1"
+  type: "Pooling"
+  bottom: "even/conv1"
+  top: "even/pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "even/conv2"
+  type: "Convolution"
+  bottom: "even/pool1"
+  top: "even/conv2"
+  param {
+    lr_mult: 0
+  }
+  param {
+    lr_mult: 0
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "even/pool2"
+  type: "Pooling"
+  bottom: "even/conv2"
+  top: "even/pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "even/ip1"
+  type: "InnerProduct"
+  bottom: "even/pool2"
+  top: "even/ip1"
+  param {
+    lr_mult: 0
+  }
+  param {
+    lr_mult: 0
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "even/relu1"
+  type: "ReLU"
+  bottom: "even/ip1"
+  top: "even/ip1"
+}
+layer {
+  name: "concat"
+  bottom: "odd/ip1"
+  bottom: "even/ip1"
+  top: "ip1_fused"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1_fused"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 10
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip2"
+  bottom: "label"
+  top: "loss"
+}

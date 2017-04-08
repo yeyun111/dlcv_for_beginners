@@ -1,0 +1,15 @@
+net: "lenet_even_train_val.prototxt"
+test_iter: 247
+test_initialization: false
+test_interval: 1000
+base_lr: 0.01
+momentum: 0.9
+weight_decay: 0.0005
+lr_policy: "step"
+gamma: 0.707
+stepsize: 1000
+display: 200
+max_iter: 30000
+snapshot: 30000
+snapshot_prefix: "mnist_lenet_even"
+solver_mode: GPU
