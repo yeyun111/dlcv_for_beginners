@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/opt/caffe/python')
+sys.path.append('/path/to/caffe/python')
 import caffe
 
 fusion_net = caffe.Net('lenet_fusion_train_val.prototxt', caffe.TEST)
