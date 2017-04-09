@@ -18,6 +18,6 @@ for prefix, model_def, model_weight in model_list:
             for i in range(n_params):
                 net.params['{}/{}'.format(prefix, layer_name)][i].data[...] = param[i].data[...]
         except Exception as e:
-            print("WTF", e)
+            print(e)
 
 fusion_net.save('init_fusion.caffemodel')
