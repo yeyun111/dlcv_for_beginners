@@ -2,7 +2,8 @@ import os
 import argparse
 import random
 import math
-from multiprocessing import Process, cpu_count
+from multiprocessing import cpu_count, Pool
+from functools import partial
 
 import cv2
 
@@ -90,54 +91,51 @@ def generate_image_list(args):
     ]
 
     random.shuffle(img_list)  # in case the file size are not uniformly distributed
+    return img_list
 
-    length = float(num_imgs) / float(args.num_procs)
-    indices = [int(round(i * length)) for i in range(args.num_procs + 1)]
-    return [img_list[indices[i]:indices[i + 1]] for i in range(args.num_procs)]
+def augment_image(image_num_pair, args):
+    filepath, n = image_num_pair
+    img = cv2.imread(filepath)
+    filename = filepath.split(os.sep)[-1]
+    dot_pos = filename.rfind('.')
+    imgname = filename[:dot_pos]
+    ext = filename[dot_pos:]
 
-def augment_images(filelist, args):
-    for filepath, n in filelist:
-        img = cv2.imread(filepath)
-        filename = filepath.split(os.sep)[-1]
-        dot_pos = filename.rfind('.')
-        imgname = filename[:dot_pos]
-        ext = filename[dot_pos:]
-
-        print('Augmenting {} ...'.format(filename))
-        for i in range(n):
-            img_varied = img.copy()
-            varied_imgname = '{}_{:0>3d}_'.format(imgname, i)
-            if random.random() < args.p_mirror:
-                img_varied = cv2.flip(img_varied, 1)
-                varied_imgname += 'm'
-            if random.random() < args.p_crop:
-                img_varied = ia.random_crop(
-                    img_varied,
-                    args.crop_size,
-                    args.crop_hw_vari)
-                varied_imgname += 'c'
-            if random.random() < args.p_rotate:
-                img_varied = ia.random_rotate(
-                    img_varied,
-                    args.rotate_angle_vari,
-                    args.p_rotate_crop)
-                varied_imgname += 'r'
-            if random.random() < args.p_hsv:
-                img_varied = ia.random_hsv_transform(
-                    img_varied,
-                    args.hue_vari,
-                    args.sat_vari,
-                    args.val_vari)
-                varied_imgname += 'h'
-            if random.random() < args.p_gamma:
-                img_varied = ia.random_gamma_transform(
-                    img_varied,
-                    args.gamma_vari)
-                varied_imgname += 'g'
-            output_filepath = os.sep.join([
-                args.output_dir,
-                '{}{}'.format(varied_imgname, ext)])
-            cv2.imwrite(output_filepath, img_varied)
+    print('Augmenting {} ...'.format(filename))
+    for i in range(n):
+        img_varied = img.copy()
+        varied_imgname = '{}_{:0>3d}_'.format(imgname, i)
+        if random.random() < args.p_mirror:
+            img_varied = cv2.flip(img_varied, 1)
+            varied_imgname += 'm'
+        if random.random() < args.p_crop:
+            img_varied = ia.random_crop(
+                img_varied,
+                args.crop_size,
+                args.crop_hw_vari)
+            varied_imgname += 'c'
+        if random.random() < args.p_rotate:
+            img_varied = ia.random_rotate(
+                img_varied,
+                args.rotate_angle_vari,
+                args.p_rotate_crop)
+            varied_imgname += 'r'
+        if random.random() < args.p_hsv:
+            img_varied = ia.random_hsv_transform(
+                img_varied,
+                args.hue_vari,
+                args.sat_vari,
+                args.val_vari)
+            varied_imgname += 'h'
+        if random.random() < args.p_gamma:
+            img_varied = ia.random_gamma_transform(
+                img_varied,
+                args.gamma_vari)
+            varied_imgname += 'g'
+        output_filepath = os.sep.join([
+            args.output_dir,
+            '{}{}'.format(varied_imgname, ext)])
+        cv2.imwrite(output_filepath, img_varied)
 
 def main():
     args = parse_args()
@@ -149,14 +147,10 @@ def main():
     print('Starting image data augmentation for {}\n'
           'with\n{}\n'.format(args.input_dir, params_str))
 
-    sublists = generate_image_list(args)
-    processes = [Process(target=augment_images, args=(x, args, )) for x in sublists]
-
-    for p in processes:
-        p.start()
-
-    for p in processes:
-        p.join()
+    image_list = generate_image_list(args)
+    aug_img = partial(augment_image, args=args)
+    pool = Pool(args.num_procs)
+    pool.map(aug_img, image_list)
 
     print('\nDone!')
 
