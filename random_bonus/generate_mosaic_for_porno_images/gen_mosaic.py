@@ -27,12 +27,15 @@ for i, filename in enumerate(filenames):
     filepath = os.sep.join([input_dir, filename])
 
     image = cv2.imread(filepath)[:, :, :3]
+    height, width = image.shape[:2]
+
     short_edge_image = min(image.shape[:2])
     scale_ratio = float(SHORT_EDGE) / float(short_edge_image)
     if scale_ratio < 1:
-        image = cv2.resize(image, (0, 0), fx=scale_ratio, fy=scale_ratio)
-    height, width = image.shape[:2]
-    transformed_image = image.astype(np.float32)
+        transformed_image = cv2.resize(image, (0, 0), fx=scale_ratio, fy=scale_ratio)
+    else:
+        transformed_image = np.copy(image)
+    transformed_image = transformed_image.astype(np.float32)
     transformed_image -= np.array([104., 117., 123.])
     transformed_image = np.transpose(transformed_image, (2, 0, 1))
 
@@ -73,3 +76,4 @@ for i, filename in enumerate(filenames):
     #cv2.waitKey()
 
 print('Done!')
+
