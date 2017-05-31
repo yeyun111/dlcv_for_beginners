@@ -17,3 +17,7 @@ Blog:
 > python gen_mosaic.py [input dir] [output dir]  
 
 代码基于第10章的激活响应可视化：[visualize_activation.py](https://github.com/frombeijingwithlove/dlcv_for_beginners/blob/master/chap10/visualize_activation.py) 修改而来。
+
+## step 3 (optional)
+用于pix2pix训练的图片如果是长宽比较大，并且XX区域大都位于画面中心，可以考虑中央裁剪并重新缩放到256x256：
+> python crop_n_resize [dir_0] [dir_1] ... [dir_n] 256
