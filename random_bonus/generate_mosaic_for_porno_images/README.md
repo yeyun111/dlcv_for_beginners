@@ -1,6 +1,6 @@
 ## 给XX图片生成马赛克
 Blog: 
-[TBU](https://zhuanlan.zhihu.com/p/xxxxxx)
+[提高驾驶技术：用GAN去除(爱情)动作片中的马赛克和衣服](https://zhuanlan.zhihu.com/p/27199954)
 
 ## step 1
 下载yahoo的open_nsfw(Not Safe For Work)模型
