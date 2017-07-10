@@ -2,7 +2,7 @@ from functools import partial
 import numpy
 from skimage import transform
 
-EPS = 1e-6
+EPS = 1e-66
 RESOLUTION = 0.001
 num_grids = int(1/RESOLUTION+0.5)
 
