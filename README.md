@@ -1,9 +1,9 @@
 ##《深度学习与计算机视觉》配套代码库  
 
-
 原名《深度学习与计算机视觉：实例入门教程》，被出版社编辑修改为现在的名字，此点请注意： **我根本不知道副标题在说什么，这就是本入门书而已**。  
 
+除此之外前言和致谢都有不同程度篡改，另外因为某些我无法理解的原因，书中部分英文被要求强行翻译，最后不同程度的翻译成了中文，并因此英文为主的文献引用未能放到书中，引用文献列表[点这里](https://github.com/frombeijingwithlove/dlcv_for_beginners/blob/master/reference.pdf)  
 
-除此之外前言和致谢都有不同程度篡改，另外因为某些我无法理解的原因，书中部分英文被要求强行翻译，最后不同程度的翻译成了中文，并因此英文为主的文献引用未能放到书中，引用文献列表[点这里](https://github.com/frombeijingwithlove/dlcv_for_beginners/blob/master/reference.pdf)  
+代码[点这里](https://github.com/frombeijingwithlove/dlcv_for_beginners)  
 
 所有彩色图表电子版下载[点这里](https://github.com/frombeijingwithlove/dlcv_book_pretrained_caffe_models/tree/master/figs_n_plots)  
