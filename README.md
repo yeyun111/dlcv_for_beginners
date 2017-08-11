@@ -1,7 +1,7 @@
 《深度学习与计算机视觉》配套代码  
 ===
 
-原名《深度学习与计算机视觉：实例入门教程》，被出版社编辑修改为现在的名字，此点请注意：框架应用什么的我根本不懂，**这只是本入门书**。除此之外 **前言** 和 **致谢** 在未知会我的情况下，被出版社进行了不同程度的篡改。
+原名《深度学习与计算机视觉：实例入门教程》，被出版社编辑修改为现在的名字，请注意：没有框架应用这么高端的东西，**这只是本入门书**。除此之外 **前言** 和 **致谢** 在未知会我的情况下，被出版社进行了不同程度的篡改。
 
 代码[点这里](https://github.com/frombeijingwithlove/dlcv_for_beginners)。所有彩色图表电子版下载[点这里](https://github.com/frombeijingwithlove/dlcv_book_pretrained_caffe_models/tree/master/figs_n_plots)，第五章和第六章的彩色图表参见在线版：[第五章上](https://zhuanlan.zhihu.com/p/24162430)，[第五章下](https://zhuanlan.zhihu.com/p/24309547)，[第六章](https://zhuanlan.zhihu.com/p/24425116)。
 
