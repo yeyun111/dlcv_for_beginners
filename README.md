@@ -1,5 +1,7 @@
-《深度学习与计算机视觉》配套代码  
+《深度学习与计算机视觉》配套代码 ?
 ===
+
+![封面](https://raw.githubusercontent.com/frombeijingwithlove/dlcv_book_pretrained_caffe_models/master/fm.jpg)
 
 原名《深度学习与计算机视觉：实例入门教程》，被出版社编辑修改为现在的名字，请注意：没有框架应用这么高端的东西，**这只是本入门书**。除此之外 **前言** 和 **致谢** 在未知会我的情况下，被出版社进行了不同程度的篡改。
 
