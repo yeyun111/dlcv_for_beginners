@@ -10,3 +10,5 @@
 因为某些我无法理解的原因，书中英文被出版社要求强行翻译，最后：1）部分英文不同程度的被翻译成了中文，2）导致英文文献占大部分的文献列表未能放到书中。引用文献列表[点这里](https://github.com/frombeijingwithlove/dlcv_for_beginners/blob/master/reference.pdf)。  
 
 内容错误请到[这里](https://github.com/frombeijingwithlove/dlcv_for_beginners/issues)提出。
+
+购买：[京东](https://item.jd.com/12152559.html)、[亚马逊](https://www.amazon.cn/gp/product/B074JWSF99)、[当当](http://product.dangdang.com/25138676.html)
