@@ -11,7 +11,4 @@
 
 内容错误请到[这里](https://github.com/frombeijingwithlove/dlcv_for_beginners/issues)提出。
 
-购买链接：
-[京东](https://item.jd.com/12152559.html)  
-[亚马逊](https://www.amazon.cn/gp/product/B074JWSF99)  
-[当当](http://product.dangdang.com/25138676.html)
+购买链接：[京东](https://item.jd.com/12152559.html)，[亚马逊](https://www.amazon.cn/gp/product/B074JWSF99)，[当当](http://product.dangdang.com/25138676.html)
