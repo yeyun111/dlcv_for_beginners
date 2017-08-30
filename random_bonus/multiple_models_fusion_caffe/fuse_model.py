@@ -16,7 +16,7 @@ for prefix, model_def, model_weight in model_list:
         n_params = len(param)
         try:
             for i in range(n_params):
-                net.params['{}/{}'.format(prefix, layer_name)][i].data[...] = param[i].data[...]
+                fusion_net.params['{}/{}'.format(prefix, layer_name)][i].data[...] = param[i].data[...]
         except Exception as e:
             print(e)
 
