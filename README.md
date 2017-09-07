@@ -15,17 +15,10 @@
 
 ## 代码快速指引
 [第五章：numpy、matplotlib可视化的例子](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap5)  
-
 [第六章：物体检测标注小工具和本地数据增强小工具](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap6)  
-
 [第七章：二维平面分类，分别基于Caffe和MXNet](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap7)  
-
 [第八章：MNIST分类，分别基于Caffe和MXNet](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap8)  
-
 [第九章：基于Caffe回归图像混乱程度，及卷积核可视化](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap9)  
-
 [第十章：从ImageNet预训练模型进行迁移学习美食分类模型，及模型类别响应图可视化，基于Caffe](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap10)  
-
 [第十二章：用MNIST训练Siamese网络，基于Caffe](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap12)  
-
 [书中未包含杂七杂八：包括制造对抗样本(Caffe)、二维GAN及训练过程可视化(PyTorch)、给色情图片自动打马赛克(Caffe)、模型融合(Caffe)、U-Net图像分割(PyTorch)](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/random_bonus)  
