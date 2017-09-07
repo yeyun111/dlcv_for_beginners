@@ -4,3 +4,4 @@
 ## [GAN和Conditional GAN生成二维样本](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/random_bonus/gan_n_cgan_2d_example)
 ## [用Yahoo!的Open NSFW给XX图片生成马赛克](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/random_bonus/generate_mosaic_for_porno_images)
 ## [Caffe中的模型融合](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/random_bonus/multiple_models_fusion_caffe)
+## [基于PyTorch实现的U-Net](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/random_bonus/unet_segmentation)
