@@ -44,7 +44,7 @@ def train(args):
                                                   labels=args.color_labels,
                                                   image_size=(args.image_width, args.image_height),
                                                   random_horizontal_flip=True,
-                                                  random_rotation=6,
+                                                  random_rotation=1,
                                                   random_crop=(0.85, 0.1))
     val_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'val']),
                                             image_folder=args.img_dir,
@@ -73,7 +73,7 @@ def train(args):
         if epoch in args.lr_policy:
             lr = args.lr_policy[epoch]
             optimizer = optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=True)
-            logging.info('| Learning Rate\t| Epoch: {}\t| Change learning rate to {}'.format(epoch, lr))
+            logging.info('| Learning Rate\t| Epoch: {}\t| Change learning rate to {}'.format(epoch+1, lr))
 
         # iterate all samples
         losses = utils.AverageMeter()
@@ -101,7 +101,7 @@ def train(args):
                     '| Epoch: {}/{}\t'
                     '| Iteration: {}/{}\t'
                     '| Training loss: {}'.format(
-                        epoch, args.epochs,
+                        epoch+1, args.epochs,
                         i_batch+1, len(train_loader),
                         losses.avg
                     )
@@ -112,7 +112,7 @@ def train(args):
             '| Epoch: {}/{}\t'
             '| Iteration: {}/{}\t'
             '| Training loss: {}'.format(
-                epoch, args.epochs,
+                epoch+1, args.epochs,
                 i_batch+1, len(train_loader),
                 losses.avg
             )
@@ -137,7 +137,7 @@ def train(args):
         logging.info(
             '| Epoch: {}/{}\t'
             '| Validation loss: {}'.format(
-                epoch, args.epochs,
+                epoch+1, args.epochs,
                 losses.avg
             )
         )
@@ -198,3 +198,4 @@ if __name__ == '__main__':
         test(args)
     else:
         print('Wrong input!')
+
