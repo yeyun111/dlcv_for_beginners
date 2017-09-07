@@ -155,6 +155,8 @@ def get_datetime_string():
     )
 
 
+# borrowed from 
+# https://github.com/pytorch/examples/tree/master/imagenet
 class AverageMeter(object):
     """Computes and stores the average and current value"""
     def __init__(self):
