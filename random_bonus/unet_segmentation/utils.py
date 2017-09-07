@@ -15,30 +15,24 @@ class SegmentationImageFolder(ImageFolder):
         root/images/002.png
         root/images/003.png
 
-        root/profiles/001.png
-        root/profiles/002.png
-        root/profiles/003.png
+        root/segmentations/001.png
+        root/segmentations/002.png
+        root/segmentations/003.png
 
         images in the two folder should be corresponding, sorting by name
 
     Args:
-        root (string): Root directory path.
-        transform (callable, optional): A function/transform that  takes in an PIL image
-            and returns a transformed version. E.g, ``transforms.RandomCrop``
-        target_transform (callable, optional): A function/transform that takes in the
-            target and transforms it.
-        loader (callable, optional): A function to load an image given its path.
-
-     Attributes:
-        classes (list): List of the class names.
-        class_to_idx (dict): Dict with items (class_name, class_index).
-        imgs (list): List of (image path, class_index) tuples
+        please refer to
+        https://github.com/frombeijingwithlove/dlcv_for_beginners/blob/master/chap6/data_augmentation/image_augmentation.py
     """
 
     def __init__(self, root,
                  image_folder='images', segmentation_folder='segmentations',
                  labels=[(0, 0, 0), (255, 255, 255)],
-                 image_size=None, random_horizontal_flip=True,
+                 image_size=None,
+                 random_horizontal_flip=False,
+                 random_rotation=None,
+                 random_crop=None,
                  loader=default_loader):
         super(SegmentationImageFolder, self).__init__(root, loader=loader)
         pair_len = len(self.imgs) / 2
@@ -52,6 +46,8 @@ class SegmentationImageFolder(ImageFolder):
         self.labels = [numpy.array(x, dtype=numpy.uint8) for x in labels]
         self.image_size = image_size
         self.flip_lr = random_horizontal_flip
+        self.random_rotation = random_rotation
+        self.random_crop = random_crop
 
     def __getitem__(self, index):
         """
@@ -66,6 +62,51 @@ class SegmentationImageFolder(ImageFolder):
         seg = self.loader(segpath)
 
         # manually transform to incorporate horizontal flip & one-hot coding for segmentation labels
+        if (self.random_rotation or self.random_crop) and self.image_size:
+            w, h = self.image_size
+            img = img.resize((w*2, h*2))
+            seg = seg.resize((w*2, h*2), Image.NEAREST)
+
+        if self.random_rotation:
+            w, h = img.size
+            angle = self.random_rotation % 360
+            img = img.rotate(angle)
+            seg = seg.rotate(angle)
+
+            angle_crop = angle % 180
+            if angle_crop > 90:
+                angle_crop = 180 - angle_crop
+            theta = angle_crop * numpy.pi / 180.0
+            hw_ratio = float(h) / float(w)
+            tan_theta = numpy.tan(theta)
+            numerator = numpy.cos(theta) + numpy.sin(theta) * tan_theta
+            r = hw_ratio if h > w else 1 / hw_ratio
+            denominator = r * tan_theta + 1
+            crop_mult = numerator / denominator
+            w_crop = int(round(crop_mult * w))
+            h_crop = int(round(crop_mult * h))
+            x0 = int((w - w_crop) / 2)
+            y0 = int((h - h_crop) / 2)
+
+            img = img.crop((x0, y0, x0+w_crop, y0+h_crop))
+            seg = seg.crop((x0, y0, x0+w_crop, y0+h_crop))
+
+        if self.random_crop:
+            area_ratio, hw_vari = self.random_crop
+            w, h = img.size
+            hw_delta = numpy.random.uniform(-hw_vari, hw_vari)
+            hw_mult = 1 + hw_delta
+            w_crop = int(round(w * numpy.sqrt(area_ratio * hw_mult)))
+            if w_crop > w - 2:
+                w_crop = w - 2
+            h_crop = int(round(h * numpy.sqrt(area_ratio / hw_mult)))
+            if h_crop > h - 2:
+                h_crop = h - 2
+            x0 = numpy.random.randint(0, w - w_crop - 1)
+            y0 = numpy.random.randint(0, h - h_crop - 1)
+            img = img.crop((x0, y0, x0+w_crop, y0+h_crop))
+            seg = seg.crop((x0, y0, x0+w_crop, y0+h_crop))
+
         if self.image_size:
             img = img.resize(self.image_size)
             seg = seg.resize(self.image_size, Image.NEAREST)

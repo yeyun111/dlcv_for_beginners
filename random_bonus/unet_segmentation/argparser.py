@@ -2,13 +2,6 @@ import os
 import argparse
 import torch.optim as optim
 
-OPTIMIZERS = {
-    'adadelta': optim.Adadelta,
-    'adam': optim.Adam,
-    'rmsprop': optim.RMSprop,
-    'sgd': optim.SGD
-}
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -25,6 +18,17 @@ def parse_args():
     parser.add_argument('--color_labels',
                         help='Colors of labels in segmentation image',
                         type=str, default='(0,0,0),(255,255,255)')
+    parser.add_argument('--image-width',
+                        help='width of image',
+                        type=int, default=256)
+    parser.add_argument('--image-height',
+                        help='height of image',
+                        type=int, default=256)
+    parser.add_argument('--output-dir',
+                        help='Directory of output for both train/test',
+                        type=str, default='')
+    parser.add_argument('--no-data-aug',
+                        help='Disable data-augmentation', action='store_true')
 
     # training options
     parser.add_argument('--img-dir',
@@ -39,12 +43,9 @@ def parse_args():
     parser.add_argument('--batch-size',
                         help='Batch size',
                         type=int, default=4)
-    parser.add_argument('--optimizer',
-                        help='Optimizer: Adadelta/Adam/RMSprop/SGD',
-                        type=str, default='SGD')
     parser.add_argument('--lr',
                         help='Learning rate, for Adadelta it is the base learning rate',
-                        type=float, default=0.01)
+                        type=float, default=0.0002)
     parser.add_argument('--lr-policy',
                         help='Learning rate policy, example:"5:0.0005,10:0.0001,18:1e-5"',
                         type=str, default='')
@@ -58,14 +59,10 @@ def parse_args():
     parser.add_argument('--model',
                         help='Path to pre-trained model',
                         type=str, default='')
-    parser.add_argument('--output-dir',
-                        help='Directory for output results',
-                        type=str, default='')
 
     args = parser.parse_args()
     args.dataroot = args.dataroot.rstrip(os.sep)
     args.color_labels = eval('[{}]'.format(args.color_labels))
-    args.optimizer = OPTIMIZERS[args.optimizer.lower()]
     args.lr_policy = eval('{{{}}}'.format(args.lr_policy)) if args.lr_policy else {}
 
     return args

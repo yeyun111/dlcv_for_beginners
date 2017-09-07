@@ -6,6 +6,7 @@ from PIL import Image
 import torch
 import torchvision
 import torch.utils.data
+import torch.optim as optim
 from torch.autograd import Variable
 from argparser import parse_args
 import utils
@@ -14,7 +15,7 @@ import networks
 
 def train(args):
     # set logger
-    logging_dir = 'train-{}'.format(utils.get_datetime_string())
+    logging_dir = args.output_dir if args.output_dir else 'train-{}'.format(utils.get_datetime_string())
     os.mkdir('{}'.format(logging_dir))
     logging.basicConfig(
         level=logging.INFO,
@@ -30,16 +31,26 @@ def train(args):
     logging.getLogger('').addHandler(console)
 
     # initialize loader
-    train_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'train']),
-                                              image_folder=args.img_dir,
-                                              segmentation_folder=args.seg_dir,
-                                              labels=args.color_labels,
-                                              image_size=(64, 128))
+    if args.no_data_aug:
+        train_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'train']),
+                                                  image_folder=args.img_dir,
+                                                  segmentation_folder=args.seg_dir,
+                                                  labels=args.color_labels,
+                                                  image_size=(args.image_width, args.image_height))
+    else:
+        train_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'train']),
+                                                  image_folder=args.img_dir,
+                                                  segmentation_folder=args.seg_dir,
+                                                  labels=args.color_labels,
+                                                  image_size=(args.image_width, args.image_height),
+                                                  random_horizontal_flip=True,
+                                                  random_rotation=6,
+                                                  random_crop=(0.85, 0.1))
     val_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'val']),
                                             image_folder=args.img_dir,
                                             segmentation_folder=args.seg_dir,
                                             labels=args.color_labels,
-                                            image_size=(64, 128))
+                                            image_size=(args.image_width, args.image_height))
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, shuffle=True)
 
@@ -52,7 +63,7 @@ def train(args):
 
     # optimizer & lr policy
     lr = args.lr
-    optimizer = args.optimizer(model.parameters(), lr=lr)
+    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=True)
     logging.info('| Learning Rate\t| Initialized learning rate: {}'.format(lr))
 
     # train
@@ -61,7 +72,7 @@ def train(args):
         # update lr if lr_policy is defined
         if epoch in args.lr_policy:
             lr = args.lr_policy[epoch]
-            optimizer = args.optimizer(model.parameters(), lr=lr)
+            optimizer = optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=True)
             logging.info('| Learning Rate\t| Epoch: {}\t| Change learning rate to {}'.format(epoch, lr))
 
         # iterate all samples
@@ -91,11 +102,21 @@ def train(args):
                     '| Iteration: {}/{}\t'
                     '| Training loss: {}'.format(
                         epoch, args.epochs,
-                        i_batch, len(train_loader),
+                        i_batch+1, len(train_loader),
                         losses.avg
                     )
                 )
                 losses = utils.AverageMeter()
+
+        logging.info(
+            '| Epoch: {}/{}\t'
+            '| Iteration: {}/{}\t'
+            '| Training loss: {}'.format(
+                epoch, args.epochs,
+                i_batch+1, len(train_loader),
+                losses.avg
+            )
+        )
 
         model.eval()
         losses = utils.AverageMeter()

@@ -61,6 +61,6 @@ class UNet(nn.Module):
         for i, down_sampled_fmap in enumerate(down_sampled_fmaps):
             x = torch.cat([x, down_sampled_fmap], 1)
             x = self.up_convs[i+1](x)
-            x = F.upsample(x, scale_factor=2)
+            x = F.upsample(x, scale_factor=2, mode='bilinear')
 
         return self.out_conv(x)
