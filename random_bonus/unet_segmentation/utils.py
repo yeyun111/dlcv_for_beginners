@@ -1,0 +1,129 @@
+from datetime import datetime
+import random
+import numpy
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchvision
+from torchvision.datasets.folder import *
+
+
+class SegmentationImageFolder(ImageFolder):
+    """A simplified segmentation data loader where the images are arranged in this way: ::
+
+        root/images/001.png
+        root/images/002.png
+        root/images/003.png
+
+        root/profiles/001.png
+        root/profiles/002.png
+        root/profiles/003.png
+
+        images in the two folder should be corresponding, sorting by name
+
+    Args:
+        root (string): Root directory path.
+        transform (callable, optional): A function/transform that  takes in an PIL image
+            and returns a transformed version. E.g, ``transforms.RandomCrop``
+        target_transform (callable, optional): A function/transform that takes in the
+            target and transforms it.
+        loader (callable, optional): A function to load an image given its path.
+
+     Attributes:
+        classes (list): List of the class names.
+        class_to_idx (dict): Dict with items (class_name, class_index).
+        imgs (list): List of (image path, class_index) tuples
+    """
+
+    def __init__(self, root,
+                 image_folder='images', segmentation_folder='segmentations',
+                 labels=[(0, 0, 0), (255, 255, 255)],
+                 image_size=None, random_horizontal_flip=True,
+                 loader=default_loader):
+        super(SegmentationImageFolder, self).__init__(root, loader=loader)
+        pair_len = len(self.imgs) / 2
+        assert image_folder in self.classes and segmentation_folder in self.classes
+        if image_folder < segmentation_folder:
+            self.imgs = [(self.imgs[i][0], self.imgs[i+pair_len][0]) for i in range(pair_len)]
+        else:
+            self.imgs = [(self.imgs[i+pair_len][0], self.imgs[i][0]) for i in range(pair_len)]
+        self.img_folder = image_folder
+        self.seg_folder = segmentation_folder
+        self.labels = [numpy.array(x, dtype=numpy.uint8) for x in labels]
+        self.image_size = image_size
+        self.flip_lr = random_horizontal_flip
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): Index
+
+        Returns:
+            tuple: (image, target) where target is class_index of the target class.
+        """
+        imgpath, segpath = self.imgs[index]
+        img = self.loader(imgpath)
+        seg = self.loader(segpath)
+
+        # manually transform to incorporate horizontal flip & one-hot coding for segmentation labels
+        if self.image_size:
+            img = img.resize(self.image_size)
+            seg = seg.resize(self.image_size, Image.NEAREST)
+
+        # random horizontal flip
+        if random.random() > 0.5:
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+            seg = seg.transpose(Image.FLIP_LEFT_RIGHT)
+
+        # one-hot coding for segmentation labels
+        seg_arr = numpy.array(seg)
+        seg = numpy.zeros(seg_arr.shape[:2], dtype=numpy.int64)
+        for i, label_color in enumerate(self.labels):
+            label_indices = numpy.where(seg_arr == label_color)[:2]
+            seg[label_indices[0], label_indices[1]] = i
+
+        # to tensor
+        transform = torchvision.transforms.ToTensor()
+        img = transform(img)
+        seg = torch.LongTensor(seg)
+
+        return img, seg
+
+    def __len__(self):
+        return len(self.imgs)
+
+
+class CrossEntropyLoss2D(nn.Module):
+    def __init__(self, size_average=True):
+        super(CrossEntropyLoss2D, self).__init__()
+        self.nll_loss_2d = nn.NLLLoss2d(size_average=size_average)
+
+    def forward(self, outputs, targets):
+        return self.nll_loss_2d(F.log_softmax(outputs), targets)
+
+
+def get_datetime_string():
+    datetime_now = datetime.now()
+    return '{}-{}-{}-{}-{}-{}'.format(
+        datetime_now.year,
+        datetime_now.month,
+        datetime_now.day,
+        datetime_now.hour,
+        datetime_now.minute,
+        datetime_now.second
+    )
+
+
+class AverageMeter(object):
+    """Computes and stores the average and current value"""
+    def __init__(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
