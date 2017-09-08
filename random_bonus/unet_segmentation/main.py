@@ -62,6 +62,7 @@ def train(args):
     criterion = utils.CrossEntropyLoss2D()
 
     # train
+    iterations = 0
     for epoch in range(args.epochs):
         model.train()
         # update lr according to lr policy
@@ -69,9 +70,9 @@ def train(args):
             lr = args.lr_policy[epoch]
             optimizer = optim.SGD(model.parameters(), lr=lr, momentum=args.momentum, nesterov=args.nesterov)
             if epoch > 0:
-                logging.info('| Learning Rate\t| Epoch: {}\t| Change learning rate to {}'.format(epoch+1, lr))
+                logging.info('| Learning Rate | Epoch: {: >3d} | Change learning rate to {}'.format(epoch+1, lr))
             else:
-                logging.info('| Learning Rate\t| Initial learning rate: {}'.format(lr))
+                logging.info('| Learning Rate | Initial learning rate: {}'.format(lr))
 
         # iterate all samples
         losses = utils.AverageMeter()
@@ -94,55 +95,53 @@ def train(args):
             loss.backward()
             optimizer.step()
 
-            if i_batch % args.print_interval == 0:
+            if iterations % args.print_interval == 0:
                 logging.info(
-                    '| Epoch: {}/{}\t'
-                    '| Iteration: {}/{}\t'
-                    '| Training loss: {}'.format(
+                    '| Iterations: {: >6d} '
+                    '| Epoch: {: >3d}/{: >3d} '
+                    '| Batch: {: >4d}/{: >4d} '
+                    '| Training loss: {:.6f}'.format(
+                        iterations, 
                         epoch+1, args.epochs,
-                        i_batch+1, len(train_loader),
+                        i_batch, len(train_loader)-1,
                         losses.avg
                     )
                 )
                 losses = utils.AverageMeter()
 
-        logging.info(
-            '| Epoch: {}/{}\t'
-            '| Iteration: {}/{}\t'
-            '| Training loss: {}'.format(
-                epoch+1, args.epochs,
-                i_batch+1, len(train_loader),
-                losses.avg
-            )
-        )
+            if iterations % args.validation_interval == 0:
+                model.eval()
+                val_losses = utils.AverageMeter()
+                for i_batch, (img, seg) in enumerate(val_loader):
 
-        model.eval()
-        losses = utils.AverageMeter()
-        for i_batch, (img, seg) in enumerate(val_loader):
+                    img = Variable(img)
+                    seg = Variable(seg)
 
-            img = Variable(img)
-            seg = Variable(seg)
+                    if not args.cpu:
+                        img = img.cuda()
+                        seg = seg.cuda()
 
-            if not args.cpu:
-                img = img.cuda()
-                seg = seg.cuda()
+                    # compute output
+                    output = model(img)
+                    loss = criterion(output, seg)
+                    val_losses.update(loss.data[0], float(img.size(0))/float(args.batch_size))
 
-            # compute output
-            output = model(img)
-            loss = criterion(output, seg)
-            losses.update(loss.data[0], float(img.size(0))/float(args.batch_size))
+                logging.info(
+                    '| Iterations: {: >6d} '
+                    '| Epoch: {: >3d}/{: >3d} '
+                    '| Validation loss: {:.6f}'.format(
+                        iterations, 
+                        epoch+1, args.epochs,
+                        val_losses.avg
+                    )
+                )
+                model.train()
 
-        logging.info(
-            '| Epoch: {}/{}\t'
-            '| Validation loss: {}'.format(
-                epoch+1, args.epochs,
-                losses.avg
-            )
-        )
+            iterations += 1
 
-        model_weights_path = '{}/epoch-{}.pth'.format(logging_dir, epoch+1)
+        model_weights_path = '{}/epoch-{:0>3d}.pth'.format(logging_dir, epoch+1)
         torch.save(model.state_dict(), model_weights_path)
-        logging.info('| Checkpoint\t| {} is saved for epoch {}'.format(model_weights_path, epoch+1))
+        logging.info('| Checkpoint | {} is saved!'.format(model_weights_path))
 
 
 def test(args):
@@ -195,5 +194,5 @@ if __name__ == '__main__':
     elif args.mode == 'test':
         test(args)
     else:
-        print('Wrong input!')
+        print('Wrong input! Please specify "train" or "test"')
 

@@ -31,12 +31,12 @@ class SegmentationImageFolder(ImageFolder):
                  labels=[(0, 0, 0), (255, 255, 255)],
                  image_size=None,
                  random_horizontal_flip=False,
-                 random_rotation=None,
+                 random_rotation=0,
                  random_crop=None,
                  random_square_crop=False,
                  loader=default_loader):
         super(SegmentationImageFolder, self).__init__(root, loader=loader)
-        pair_len = len(self.imgs) / 2
+        pair_len = len(self.imgs) // 2
         assert image_folder in self.classes and segmentation_folder in self.classes
         if image_folder < segmentation_folder:
             self.imgs = [(self.imgs[i][0], self.imgs[i+pair_len][0]) for i in range(pair_len)]
@@ -178,3 +178,4 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+

@@ -55,7 +55,8 @@ def parse_args():
             'batch_norm': True,
             'batch_size': 4,
             'epochs': 24,
-            'print_interval': 20,
+            'print_interval': 50,
+            'validation_interval': 1000, 
             'random_horizontal_flip': False,
             'random_square_crop': False,
             'random_crop': None,  # example: (0.81, 0.1), use 0.81 as area ratio, & 0.1 as the hw ratio variation
