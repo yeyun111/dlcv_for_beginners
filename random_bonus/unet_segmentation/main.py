@@ -149,6 +149,10 @@ def test(args):
         print('Need a pretrained model!')
         return
 
+    if not args.color_labels:
+        print('Need to specify color labels')
+        return
+
     # check if output dir exists
     output_dir = args.output_dir if args.output_dir else 'test-{}'.format(utils.get_datetime_string())
     if not os.path.exists(output_dir):
@@ -176,7 +180,8 @@ def test(args):
             img = img.cuda()
         output = model(img)
         _, c, h, w = output.data.shape
-        output_argmax = numpy.argmax(output.data.numpy()[0], axis=0)
+        output_numpy = output.data.numpy()[0] if args.cpu else output.data.cpu().numpy()[0]
+        output_argmax = numpy.argmax(output_numpy, axis=0)
         out_img = numpy.zeros((h, w, 3), dtype=numpy.uint8)
         for i, color in enumerate(args.color_labels):
             out_img[output_argmax == i] = numpy.array(args.color_labels[i], dtype=numpy.uint8)

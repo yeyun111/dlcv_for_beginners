@@ -23,6 +23,9 @@ def parse_args():
     parser.add_argument('--output-dir',
                         help='Directory of output for both train/test',
                         type=str, default='')
+    parser.add_argument('--color_labels',
+                        help='Color labels for test output',
+                        type=str, default='')
 
     # train options
     parser.add_argument('--config',
@@ -43,8 +46,7 @@ def parse_args():
         # default: no augmentation, with batch-norm
         params = {
             # general params
-            'unet_layers': [32, 64, 128, 256, 512], 
-            'color_labels': [],
+            'unet_layers': [32, 64, 128, 256, 512],
 
             # training params
             'image_width': 256,
@@ -73,6 +75,9 @@ def parse_args():
         # set params to args
         for k, v in params.items():
             setattr(args, k, v)
+
+    elif args.mode == 'test':
+        args.color_labels = eval('[{}]'.format(args.color_labels))
 
     args.dataroot = args.dataroot.rstrip(os.sep)
 
