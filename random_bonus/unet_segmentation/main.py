@@ -55,7 +55,7 @@ def train(args):
     val_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, shuffle=True)
 
     # initialize model, input channels need to be calculated by hand
-    model = networks.UNet([32, 64, 128, 256, 512], 3, len(args.color_labels), use_bn=args.batch_norm)
+    model = networks.UNet(args.unet_layers, 3, len(args.color_labels), use_bn=args.batch_norm)
     if not args.cpu:
         model.cuda()
 

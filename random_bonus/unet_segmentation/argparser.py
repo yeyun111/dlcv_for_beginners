@@ -43,6 +43,7 @@ def parse_args():
         # default: no augmentation, with batch-norm
         params = {
             # general params
+            'unet_layers': [32, 64, 128, 256, 512], 
             'color_labels': [],
 
             # training params
