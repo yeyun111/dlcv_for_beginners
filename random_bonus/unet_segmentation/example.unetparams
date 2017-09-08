@@ -1,0 +1,12 @@
+lr_policy={0: 1e-3, 1: 1e-4, 2: 5e-5, 5: 2e-5, 10: 1e-5, 18: 2e-6}
+batch_size=4
+epochs=24
+print_interval=20
+color_labels=[(0, 0, 255), (0, 255, 0), (255, 0, 0)]
+image_width=64
+image_height=64
+random_horizontal_flip=True
+random_square_crop=True
+random_rotation=3
+img_dir='images'
+seg_dir='profiles'

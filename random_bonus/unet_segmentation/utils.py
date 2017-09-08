@@ -33,6 +33,7 @@ class SegmentationImageFolder(ImageFolder):
                  random_horizontal_flip=False,
                  random_rotation=None,
                  random_crop=None,
+                 random_square_crop=False,
                  loader=default_loader):
         super(SegmentationImageFolder, self).__init__(root, loader=loader)
         pair_len = len(self.imgs) / 2
@@ -48,6 +49,7 @@ class SegmentationImageFolder(ImageFolder):
         self.flip_lr = random_horizontal_flip
         self.random_rotation = random_rotation
         self.random_crop = random_crop
+        self.random_square_crop = random_square_crop
 
     def __getitem__(self, index):
         """
@@ -62,11 +64,6 @@ class SegmentationImageFolder(ImageFolder):
         seg = self.loader(segpath)
 
         # manually transform to incorporate horizontal flip & one-hot coding for segmentation labels
-        if (self.random_rotation or self.random_crop) and self.image_size:
-            w, h = self.image_size
-            img = img.resize((w*2, h*2))
-            seg = seg.resize((w*2, h*2), Image.NEAREST)
-
         if self.random_rotation:
             w, h = img.size
             angle = self.random_rotation % 360
@@ -106,6 +103,17 @@ class SegmentationImageFolder(ImageFolder):
             y0 = numpy.random.randint(0, h - h_crop - 1)
             img = img.crop((x0, y0, x0+w_crop, y0+h_crop))
             seg = seg.crop((x0, y0, x0+w_crop, y0+h_crop))
+
+        if self.random_square_crop:
+            w, h = img.size
+            if w > h:
+                x0 = random.randint(0, w-h-1)
+                img = img.crop((x0, 0, x0+h, h))
+                seg = seg.crop((x0, 0, x0+h, h))
+            elif w < h:
+                y0 = random.randint(0, h-w-1)
+                img = img.crop((0, y0, w, y0+w))
+                seg = seg.crop((0, y0, w, y0+w))
 
         if self.image_size:
             img = img.resize(self.image_size)

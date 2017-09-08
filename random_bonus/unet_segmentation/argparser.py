@@ -1,6 +1,11 @@
 import os
 import argparse
-import torch.optim as optim
+
+
+def parse_param_file(filepath):
+    with open(filepath, 'r') as f:
+        kw_exprs = [x.strip() for x in f.readlines() if x.strip()]
+    return eval('dict({})'.format(','.join(kw_exprs)))
 
 
 def parse_args():
@@ -15,45 +20,14 @@ def parse_args():
                         help='Directory containing training images in "images" and "segmentations" or test images')
     parser.add_argument('--cpu',
                         help='Set to CPU mode', action='store_true')
-    parser.add_argument('--color_labels',
-                        help='Colors of labels in segmentation image',
-                        type=str, default='(0,0,0),(255,255,255)')
-    parser.add_argument('--image-width',
-                        help='width of image',
-                        type=int, default=256)
-    parser.add_argument('--image-height',
-                        help='height of image',
-                        type=int, default=256)
     parser.add_argument('--output-dir',
                         help='Directory of output for both train/test',
                         type=str, default='')
-    parser.add_argument('--no-data-aug',
-                        help='Disable data-augmentation', action='store_true')
 
-    # training options
-    parser.add_argument('--img-dir',
-                        help='Directory under [dataroot] containing images',
-                        type=str, default='images')
-    parser.add_argument('--seg-dir',
-                        help='Directory under [dataroot] containing segmentations',
-                        type=str, default='segmentations')
-    parser.add_argument('--epochs',
-                        help='Num of training epochs',
-                        type=int, default=20)
-    parser.add_argument('--batch-size',
-                        help='Batch size',
-                        type=int, default=4)
-    parser.add_argument('--lr',
-                        help='Learning rate, for Adadelta it is the base learning rate',
-                        type=float, default=0.0002)
-    parser.add_argument('--lr-policy',
-                        help='Learning rate policy, example:"5:0.0005,10:0.0001,18:1e-5"',
+    # train options
+    parser.add_argument('--config',
+                        help='Path to config file',
                         type=str, default='')
-    parser.add_argument('--no-batchnorm',
-                        help='Do NOT use batch normalization', action='store_true')
-    parser.add_argument('--print-interval',
-                        help='Print info after each specified iterations',
-                        type=int, default=20)
 
     # test options
     parser.add_argument('--model',
@@ -61,8 +35,43 @@ def parse_args():
                         type=str, default='')
 
     args = parser.parse_args()
+
+    # other params specified in config file
+    if args.mode == 'train':
+        kwargs = parse_param_file(args.config)
+
+        # default: no augmentation, with batch-norm
+        params = {
+            # general params
+            'color_labels': [],
+
+            # training params
+            'image_width': 256,
+            'image_height': 256,
+            'lr_policy': {0: 1e-4},
+            'momentum': 0.9,
+            'nesterov': True,
+            'batch_norm': True,
+            'batch_size': 4,
+            'epochs': 24,
+            'print_interval': 20,
+            'random_horizontal_flip': False,
+            'random_square_crop': False,
+            'random_crop': None,  # example: (0.81, 0.1), use 0.81 as area ratio, & 0.1 as the hw ratio variation
+            'random_rotation': 0,
+            'img_dir': 'images',
+            'seg_dir': 'segmentations'
+        }
+
+        # update params from config
+        for k, v in kwargs.items():
+            if k in params:
+                params[k] = v
+
+        # set params to args
+        for k, v in params.items():
+            setattr(args, k, v)
+
     args.dataroot = args.dataroot.rstrip(os.sep)
-    args.color_labels = eval('[{}]'.format(args.color_labels))
-    args.lr_policy = eval('{{{}}}'.format(args.lr_policy)) if args.lr_policy else {}
 
     return args

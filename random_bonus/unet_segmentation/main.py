@@ -30,50 +30,48 @@ def train(args):
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
+    logging.info('=========== Taks {} started! ==========='.format(args.output_dir))
+    for arg in vars(args):
+        logging.info('{}: {}'.format(arg, getattr(args, arg)))
+    logging.info('========================================')
+
     # initialize loader
-    if args.no_data_aug:
-        train_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'train']),
-                                                  image_folder=args.img_dir,
-                                                  segmentation_folder=args.seg_dir,
-                                                  labels=args.color_labels,
-                                                  image_size=(args.image_width, args.image_height))
-    else:
-        train_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'train']),
-                                                  image_folder=args.img_dir,
-                                                  segmentation_folder=args.seg_dir,
-                                                  labels=args.color_labels,
-                                                  image_size=(args.image_width, args.image_height),
-                                                  random_horizontal_flip=True,
-                                                  random_rotation=1,
-                                                  random_crop=(0.85, 0.1))
+    train_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'train']),
+                                              image_folder=args.img_dir,
+                                              segmentation_folder=args.seg_dir,
+                                              labels=args.color_labels,
+                                              image_size=(args.image_width, args.image_height),
+                                              random_horizontal_flip=args.random_horizontal_flip,
+                                              random_rotation=args.random_rotation,
+                                              random_crop=args.random_crop,
+                                              random_square_crop=args.random_square_crop)
     val_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'val']),
                                             image_folder=args.img_dir,
                                             segmentation_folder=args.seg_dir,
                                             labels=args.color_labels,
-                                            image_size=(args.image_width, args.image_height))
+                                            image_size=(args.image_width, args.image_height),
+                                            random_square_crop=args.random_square_crop)
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, shuffle=True)
 
     # initialize model, input channels need to be calculated by hand
-    model = networks.UNet([32, 64, 128, 256, 512], 3, 2)
+    model = networks.UNet([32, 64, 128, 256, 512], 3, len(args.color_labels), use_bn=args.batch_norm)
     if not args.cpu:
         model.cuda()
 
     criterion = utils.CrossEntropyLoss2D()
 
-    # optimizer & lr policy
-    lr = args.lr
-    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=True)
-    logging.info('| Learning Rate\t| Initialized learning rate: {}'.format(lr))
-
     # train
     for epoch in range(args.epochs):
         model.train()
-        # update lr if lr_policy is defined
+        # update lr according to lr policy
         if epoch in args.lr_policy:
             lr = args.lr_policy[epoch]
-            optimizer = optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, nesterov=True)
-            logging.info('| Learning Rate\t| Epoch: {}\t| Change learning rate to {}'.format(epoch+1, lr))
+            optimizer = optim.SGD(model.parameters(), lr=lr, momentum=args.momentum, nesterov=args.nesterov)
+            if epoch > 0:
+                logging.info('| Learning Rate\t| Epoch: {}\t| Change learning rate to {}'.format(epoch+1, lr))
+            else:
+                logging.info('| Learning Rate\t| Initial learning rate: {}'.format(lr))
 
         # iterate all samples
         losses = utils.AverageMeter()
