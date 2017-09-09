@@ -47,6 +47,7 @@ def parse_args():
         params = {
             # general params
             'unet_layers': [32, 64, 128, 256, 512],
+            'color_labels': [],
 
             # training params
             'image_width': 256,
