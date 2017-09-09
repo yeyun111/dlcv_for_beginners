@@ -112,7 +112,7 @@ def train(args):
             if iterations % args.validation_interval == 0:
                 model.eval()
                 val_losses = utils.AverageMeter()
-                for i_batch, (img, seg) in enumerate(val_loader):
+                for img, seg in val_loader:
 
                     img = Variable(img)
                     seg = Variable(seg)
@@ -135,13 +135,15 @@ def train(args):
                         val_losses.avg
                     )
                 )
+
                 model.train()
 
-            iterations += 1
+            if iterations % args.checkpoint_interval == 0 and iterations > 0:
+                model_weights_path = '{}/iterations-{:0>6d}-epoch-{:0>3d}.pth'.format(logging_dir, iterations, epoch+1)
+                torch.save(model.state_dict(), model_weights_path)
+                logging.info('| Checkpoint | {} is saved!'.format(model_weights_path))
 
-        model_weights_path = '{}/epoch-{:0>3d}.pth'.format(logging_dir, epoch+1)
-        torch.save(model.state_dict(), model_weights_path)
-        logging.info('| Checkpoint | {} is saved!'.format(model_weights_path))
+            iterations += 1
 
 
 def test(args):
@@ -159,7 +161,7 @@ def test(args):
         os.mkdir(output_dir)
 
     # load model
-    model = networks.UNet([32, 64, 128, 256, 512], 3, 2)
+    model = networks.UNet(args.unet_layers, 3, len(args.color_labels))
     model.load_state_dict(torch.load(args.model))
     model = model.eval()
 

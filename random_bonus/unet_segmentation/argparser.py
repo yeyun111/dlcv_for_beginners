@@ -23,9 +23,6 @@ def parse_args():
     parser.add_argument('--output-dir',
                         help='Directory of output for both train/test',
                         type=str, default='')
-    parser.add_argument('--color_labels',
-                        help='Color labels for test output',
-                        type=str, default='')
 
     # train options
     parser.add_argument('--config',
@@ -39,16 +36,19 @@ def parse_args():
 
     args = parser.parse_args()
 
+    params = {
+        # general params
+        'unet_layers': [32, 64, 128, 256, 512],
+        'color_labels': []
+    }
+
     # other params specified in config file
     if args.mode == 'train':
         kwargs = parse_param_file(args.config)
 
         # default: no augmentation, with batch-norm
-        params = {
-            # general params
-            'unet_layers': [32, 64, 128, 256, 512],
-            'color_labels': [],
 
+        train_params = {
             # training params
             'image_width': 256,
             'image_height': 256,
@@ -59,7 +59,8 @@ def parse_args():
             'batch_size': 4,
             'epochs': 24,
             'print_interval': 50,
-            'validation_interval': 1000, 
+            'validation_interval': 1000,
+            'checkpoint_interval': 10000,
             'random_horizontal_flip': False,
             'random_square_crop': False,
             'random_crop': None,  # example: (0.81, 0.1), use 0.81 as area ratio, & 0.1 as the hw ratio variation
@@ -68,17 +69,16 @@ def parse_args():
             'seg_dir': 'segmentations'
         }
 
-        # update params from config
-        for k, v in kwargs.items():
-            if k in params:
-                params[k] = v
+        params.update(train_params)
 
-        # set params to args
-        for k, v in params.items():
-            setattr(args, k, v)
+    # update params from config
+    for k, v in kwargs.items():
+        if k in params:
+            params[k] = v
 
-    elif args.mode == 'test':
-        args.color_labels = eval('[{}]'.format(args.color_labels))
+    # set params to args
+    for k, v in params.items():
+        setattr(args, k, v)
 
     args.dataroot = args.dataroot.rstrip(os.sep)
 
