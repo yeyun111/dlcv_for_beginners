@@ -40,5 +40,5 @@ for group in groups:
     pyplot.plot(train_loss[:, 0], train_loss[:, 1], label=group)
     pyplot.plot(val_loss[:, 0], val_loss[:, 1], '--', label=group)
 
-pyplot.legend(loc='top right')
+pyplot.legend(loc='upper right')
 pyplot.show()

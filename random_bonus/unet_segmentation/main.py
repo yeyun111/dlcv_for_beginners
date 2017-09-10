@@ -52,10 +52,11 @@ def train(args):
                                             image_size=(args.image_width, args.image_height),
                                             random_square_crop=args.random_square_crop)
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
-    val_loader = torch.utils.data.DataLoader(val_set, batch_size=args.batch_size, shuffle=True)
+    val_loader = torch.utils.data.DataLoader(val_set, batch_size=args.val_batch_size)
 
     # initialize model, input channels need to be calculated by hand
-    model = networks.UNet(args.unet_layers, 3, len(args.color_labels), use_bn=args.batch_norm)
+    n_classes = len(args.color_labels)
+    model = networks.UNet(args.unet_layers, 3, n_classes, use_bn=args.batch_norm)
     if not args.cpu:
         model.cuda()
 
@@ -68,7 +69,8 @@ def train(args):
         # update lr according to lr policy
         if epoch in args.lr_policy:
             lr = args.lr_policy[epoch]
-            optimizer = optim.SGD(model.parameters(), lr=lr, momentum=args.momentum, nesterov=args.nesterov)
+            optimizer = utils.get_optimizer(args.optimizer, model.parameters(),
+                                            lr=lr, momentum=args.momentum, nesterov=args.nesterov)
             if epoch > 0:
                 logging.info('| Learning Rate | Epoch: {: >3d} | Change learning rate to {}'.format(epoch+1, lr))
             else:
@@ -95,6 +97,7 @@ def train(args):
             loss.backward()
             optimizer.step()
 
+            # logging training curve
             if iterations % args.print_interval == 0:
                 logging.info(
                     '| Iterations: {: >6d} '
@@ -109,9 +112,15 @@ def train(args):
                 )
                 losses = utils.AverageMeter()
 
+            # validation on all val samples
             if iterations % args.validation_interval == 0:
                 model.eval()
                 val_losses = utils.AverageMeter()
+                gt_pixel_count = [0] * n_classes
+                pred_pixel_count = [0] * n_classes
+                intersection_pixel_count = [0] * n_classes
+                union_pixel_count = [0] * n_classes
+
                 for img, seg in val_loader:
 
                     img = Variable(img)
@@ -125,14 +134,44 @@ def train(args):
                     output = model(img)
                     loss = criterion(output, seg)
                     val_losses.update(loss.data[0], float(img.size(0))/float(args.batch_size))
+                    output_numpy = output.data.numpy() if args.cpu else output.data.cpu().numpy()
+                    pred_labels = numpy.argmax(output_numpy, axis=1)
+                    gt_labels = seg.data.numpy() if args.cpu else seg.data.cpu().numpy()
+
+                    pred_labels = pred_labels.flatten()
+                    gt_labels = gt_labels.flatten()
+
+                    for i in range(n_classes):
+                        pred_pixel_count[i] += (pred_labels == i).sum()
+                        gt_pixel_count[i] += (gt_labels == i).sum()
+                        gt_dumb = numpy.full(gt_labels.shape, -1, dtype=numpy.int)
+                        pred_dumb = numpy.full(pred_labels.shape, -2, dtype=numpy.int)
+                        gt_dumb[gt_labels == i] = 0
+                        pred_dumb[pred_labels == i] = 0
+                        intersection_pixel_count[i] += (gt_dumb == pred_dumb).sum()
+                        pred_dumb[gt_labels == i] = 0
+                        union_pixel_count[i] += (pred_dumb == 0).sum()
+
+                # calculate mPA & mIOU
+                mPA = 0
+                mIOU = 0
+                for i in range(n_classes):
+                    mPA += float(intersection_pixel_count[i]) / float(gt_pixel_count[i])
+                    mIOU += float(intersection_pixel_count[i]) / float(union_pixel_count[i])
+                mPA /= float(n_classes)
+                mIOU /= float(n_classes)
 
                 logging.info(
                     '| Iterations: {: >6d} '
                     '| Epoch: {: >3d}/{: >3d} '
-                    '| Validation loss: {:.6f}'.format(
+                    '| Validation loss: {:.6f} '
+                    '| Average mPA: {:.4f} '
+                    '| Average mIOU: {:.4f}'.format(
                         iterations, 
                         epoch+1, args.epochs,
-                        val_losses.avg
+                        val_losses.avg,
+                        mPA,
+                        mIOU
                     )
                 )
 

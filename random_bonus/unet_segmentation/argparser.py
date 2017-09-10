@@ -52,11 +52,13 @@ def parse_args():
             # training params
             'image_width': 256,
             'image_height': 256,
+            'optimizer': 'SGD',
             'lr_policy': {0: 1e-4},
             'momentum': 0.9,
             'nesterov': True,
             'batch_norm': True,
             'batch_size': 4,
+            'val_batch_size': None,
             'epochs': 24,
             'print_interval': 50,
             'validation_interval': 1000,
@@ -70,6 +72,8 @@ def parse_args():
         }
 
         params.update(train_params)
+        if params['val_batch_size'] is None:
+            params['val_batch_size'] = params['batch_size']
 
     # update params from config
     for k, v in kwargs.items():

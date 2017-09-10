@@ -6,6 +6,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 from torchvision.datasets.folder import *
+from torch.optim import SGD, Adadelta, Adam, Adagrad, RMSprop, ASGD
+
+OPTIMIZERS = {
+    'sgd': SGD,
+    'adadelta': Adadelta,
+    'adam': Adam,
+    'adagrad': Adagrad,
+    'rmsprop': RMSprop,
+    'asgd': ASGD
+}
 
 
 class SegmentationImageFolder(ImageFolder):
@@ -179,3 +189,25 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
+
+def get_optimizer(name, model_params, **kwargs):
+    name = name.lower()
+    if name == 'sgd':
+        optimizer = OPTIMIZERS[name](
+            model_params,
+            lr=kwargs['lr'],
+            momentum=kwargs['momentum'],
+            nesterov=kwargs['nesterov']
+        )
+    elif name in ['adadelta', 'adam', 'adagrad', 'asgd']:
+        optimizer = OPTIMIZERS[name](model_params, lr=kwargs['lr'])
+    elif name == 'rmsprop':
+        optimizer = OPTIMIZERS[name](
+            model_params,
+            lr=kwargs['lr'],
+            momentum=kwargs['momentum'],
+        )
+    else:
+        raise Exception('Not supported optimizer!')
+
+    return optimizer
