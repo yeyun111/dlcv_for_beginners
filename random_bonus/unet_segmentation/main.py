@@ -164,14 +164,14 @@ def train(args):
                 logging.info(
                     '| Iterations: {: >6d} '
                     '| Epoch: {: >3d}/{: >3d} '
-                    '| Validation loss: {:.6f} '
                     '| Average mPA: {:.4f} '
-                    '| Average mIOU: {:.4f}'.format(
+                    '| Average mIOU: {:.4f} '
+                    '| Validation loss: {:.6f} '.format(
                         iterations, 
                         epoch+1, args.epochs,
-                        val_losses.avg,
                         mPA,
-                        mIOU
+                        mIOU,
+                        val_losses.avg
                     )
                 )
 

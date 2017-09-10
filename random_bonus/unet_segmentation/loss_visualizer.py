@@ -8,6 +8,8 @@ TRAIN_LOSS_KEYWORD = '| Training loss: '
 VAL_LOSS_KEYWORD = '| Validation loss: '
 ITER_INDEX = 4
 LOSS_INDEX = -1
+MIOU_INDEX = -5
+MPA_INDEX = -9
 
 
 def parse_log(filepath):
@@ -18,11 +20,13 @@ def parse_log(filepath):
         while line:
             if TRAIN_LOSS_KEYWORD in line or VAL_LOSS_KEYWORD in line:
                 tokens = line.split()
-                loss = [int(tokens[ITER_INDEX]), float(tokens[LOSS_INDEX])]
+                measure = [int(tokens[ITER_INDEX]), float(tokens[LOSS_INDEX])]
                 if TRAIN_LOSS_KEYWORD in line:
-                    train_curve.append(loss)
+                    train_curve.append(measure)
                 else:
-                    val_curve.append(loss)
+                    measure.extend([float(tokens[MPA_INDEX]), float(tokens[MIOU_INDEX])])
+                    val_curve.append(measure)
+
             line = f.readline()
     return train_curve, val_curve
 
@@ -39,6 +43,12 @@ for group in groups:
     pyplot.figure('Train/Test Loss Curves')
     pyplot.plot(train_loss[:, 0], train_loss[:, 1], label=group)
     pyplot.plot(val_loss[:, 0], val_loss[:, 1], '--', label=group)
+    pyplot.figure('mPA/mIOU Curves')
+    pyplot.plot(val_loss[:, 0], val_loss[:, 2], label='{}-mPA'.format(group))
+    pyplot.plot(val_loss[:, 0], val_loss[:, 3], '--', label='{}-mIOU'.format(group))
 
+pyplot.figure('Train/Test Loss Curves')
 pyplot.legend(loc='upper right')
+pyplot.figure('mPA/mIOU Curves')
+pyplot.legend(loc='lower right')
 pyplot.show()
