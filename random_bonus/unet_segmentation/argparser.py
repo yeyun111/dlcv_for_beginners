@@ -18,15 +18,12 @@ def parse_args():
                         help='train/test')
     parser.add_argument('dataroot',
                         help='Directory containing training images in "images" and "segmentations" or test images')
+    parser.add_argument('config',
+                        help='Path to config file')
     parser.add_argument('--cpu',
                         help='Set to CPU mode', action='store_true')
     parser.add_argument('--output-dir',
                         help='Directory of output for both train/test',
-                        type=str, default='')
-
-    # train options
-    parser.add_argument('--config',
-                        help='Path to config file',
                         type=str, default='')
 
     # test options
@@ -42,9 +39,10 @@ def parse_args():
         'color_labels': []
     }
 
+    kwargs = parse_param_file(args.config)
+    
     # other params specified in config file
     if args.mode == 'train':
-        kwargs = parse_param_file(args.config)
 
         # default: no augmentation, with batch-norm
 
