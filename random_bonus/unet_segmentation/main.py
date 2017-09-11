@@ -1,16 +1,17 @@
 import logging
 import os
-import sys
 import numpy
 from PIL import Image
 import torch
 import torchvision
 import torch.utils.data
-import torch.optim as optim
+import torch.nn as nn
+import torch.functional as F
 from torch.autograd import Variable
 from argparser import parse_args
 import utils
 import networks
+
 
 
 def train(args):
@@ -44,23 +45,28 @@ def train(args):
                                               random_horizontal_flip=args.random_horizontal_flip,
                                               random_rotation=args.random_rotation,
                                               random_crop=args.random_crop,
-                                              random_square_crop=args.random_square_crop)
+                                              random_square_crop=args.random_square_crop,
+                                              label_regr=args.regression)
     val_set = utils.SegmentationImageFolder(os.sep.join([args.dataroot, 'val']),
                                             image_folder=args.img_dir,
                                             segmentation_folder=args.seg_dir,
                                             labels=args.color_labels,
                                             image_size=(args.image_width, args.image_height),
-                                            random_square_crop=args.random_square_crop)
+                                            random_square_crop=args.random_square_crop,
+                                            label_regr=args.regression)
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_set, batch_size=args.val_batch_size)
 
     # initialize model, input channels need to be calculated by hand
     n_classes = len(args.color_labels)
-    model = networks.UNet(args.unet_layers, 3, n_classes, use_bn=args.batch_norm)
+    if args.regression:
+        model = networks.UNet(args.unet_layers, 3, 1, use_bn=args.batch_norm)
+    else:
+        model = networks.UNet(args.unet_layers, 3, n_classes, use_bn=args.batch_norm)
     if not args.cpu:
         model.cuda()
 
-    criterion = utils.CrossEntropyLoss2D()
+    criterion = nn.MSELoss() if args.regression else utils.CrossEntropyLoss2D()
 
     # train
     iterations = 0

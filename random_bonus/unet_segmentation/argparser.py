@@ -66,7 +66,8 @@ def parse_args():
             'random_crop': None,  # example: (0.81, 0.1), use 0.81 as area ratio, & 0.1 as the hw ratio variation
             'random_rotation': 0,
             'img_dir': 'images',
-            'seg_dir': 'segmentations'
+            'seg_dir': 'segmentations',
+            'regression': False,
         }
 
         params.update(train_params)

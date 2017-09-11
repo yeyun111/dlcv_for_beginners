@@ -44,7 +44,8 @@ class SegmentationImageFolder(ImageFolder):
                  random_rotation=0,
                  random_crop=None,
                  random_square_crop=False,
-                 loader=default_loader):
+                 loader=default_loader,
+                 label_regr=False):
         super(SegmentationImageFolder, self).__init__(root, loader=loader)
         pair_len = len(self.imgs) // 2
         assert image_folder in self.classes and segmentation_folder in self.classes
@@ -60,6 +61,7 @@ class SegmentationImageFolder(ImageFolder):
         self.random_rotation = random_rotation
         self.random_crop = random_crop
         self.random_square_crop = random_square_crop
+        self.label_regr=label_regr
 
     def __getitem__(self, index):
         """
@@ -144,7 +146,7 @@ class SegmentationImageFolder(ImageFolder):
         # to tensor
         transform = torchvision.transforms.ToTensor()
         img = transform(img)
-        seg = torch.LongTensor(seg)
+        seg = torch.Tensor(seg) if self.label_regr else torch.LongTensor(seg)
 
         return img, seg
 

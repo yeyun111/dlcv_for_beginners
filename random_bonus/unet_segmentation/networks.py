@@ -63,4 +63,6 @@ class UNet(nn.Module):
             x = self.up_convs[i+1](x)
             x = F.upsample(x, scale_factor=2, mode='bilinear')
 
-        return self.out_conv(x)
+        x = self.out_conv(x)
+        return x if self.out_conv.out_channels == 1 else F.relu(x)
+
