@@ -219,7 +219,7 @@ def test(args):
         filepath = os.sep.join([args.dataroot, filename])
         with open(filepath, 'r') as f:
             img = Image.open(f)
-            img = img.resize((128, 256))
+            img = img.resize((args.image_width, args.image_height))
             img = transform(img)
             img = img.view(1, *img.shape)
             img = Variable(img)
