@@ -37,8 +37,8 @@ def parse_args():
         # general params
         'unet_layers': [32, 64, 128, 256, 512],
         'color_labels': [], 
-        'image_width': 256,
-        'image_height': 256
+        'image_width': None,
+        'image_height': None
     }
 
     kwargs = parse_param_file(args.config)

@@ -200,6 +200,8 @@ def test(args):
         print('Need to specify color labels')
         return
 
+    resize_img = False if args.image_width is None or args.image_height is None else True
+
     # check if output dir exists
     output_dir = args.output_dir if args.output_dir else 'test-{}'.format(utils.get_datetime_string())
     if not os.path.exists(output_dir):
@@ -242,6 +244,9 @@ if __name__ == '__main__':
 
     args = parse_args()
     if args.mode == 'train':
+        if args.image_width is None or args.image_height is None:
+            print('Image size must be specified for training!')
+            exit(0)
         train(args)
     elif args.mode == 'test':
         test(args)
