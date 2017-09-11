@@ -36,7 +36,9 @@ def parse_args():
     params = {
         # general params
         'unet_layers': [32, 64, 128, 256, 512],
-        'color_labels': []
+        'color_labels': [], 
+        'image_width': 256,
+        'image_height': 256
     }
 
     kwargs = parse_param_file(args.config)
@@ -48,8 +50,6 @@ def parse_args():
 
         train_params = {
             # training params
-            'image_width': 256,
-            'image_height': 256,
             'optimizer': 'SGD',
             'lr_policy': {0: 1e-4},
             'momentum': 0.9,
