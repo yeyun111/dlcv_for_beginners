@@ -8,3 +8,4 @@ In root folder, create "train" & "val" folder containing two folders with images
 
 ### Human Parsing Example
 humanparsing-256.cfg
+https://github.com/lemondan/HumanParsing-Dataset
