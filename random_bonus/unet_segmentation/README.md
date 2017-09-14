@@ -5,3 +5,6 @@ In root folder, create "train" & "val" folder containing two folders with images
 
 ### Step 2  
 > python main.py train [path/to/root_folder] --config [path/to/configfile]
+
+### Human Parsing Example
+humanparsing-256.cfg
