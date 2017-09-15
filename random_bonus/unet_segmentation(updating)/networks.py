@@ -67,3 +67,18 @@ class UNet(nn.Module):
         #x = self.out_conv(x)
         #return x if self.out_conv.out_channels == 1 else F.relu(x)
 
+
+class StackedUNet(nn.Module):
+    def __init__(self, conv_channels, n_stages=3, input_nch=3, output_nch=2, n_hidden=16, use_bn=True):
+        super(StackedUNet, self).__init__()
+        self.n_stages = n_stages
+        unets = [UNet(conv_channels, input_nch, n_hidden, use_bn=use_bn)]
+        for i in range(n_stages-2):
+            unets.append(UNet(conv_channels, n_hidden, n_hidden, use_bn=use_bn))
+        unets.append(UNet(conv_channels, n_hidden, output_nch, use_bn=use_bn))
+        self.unets = nn.ModuleList(unets)
+
+    def forward(self, x):
+        for i in range(self.n_stages):
+            x = self.unets[i](x)
+        return x
