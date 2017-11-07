@@ -21,4 +21,4 @@
 [第九章：基于Caffe回归图像混乱程度，及卷积核可视化](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap9)   
 [第十章：从ImageNet预训练模型进行迁移学习美食分类模型，混淆矩阵，ROC曲线绘制及模型类别响应图可视化，基于Caffe](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap10)  
 [第十二章：用MNIST训练Siamese网络，t-SNE可视化，基于Caffe](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/chap12)  
-[书中未包含杂七杂八：包括制造对抗样本(Caffe)、二维GAN及训练过程可视化(PyTorch)、给色情图片自动打马赛克(Caffe)、模型融合(Caffe)、U-Net图像分割(PyTorch)](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/random_bonus)  
+[书中未包含杂七杂八：包括制造对抗样本(Caffe)、二维GAN及训练过程可视化(PyTorch)、给色情图片自动打马赛克(Caffe)、模型融合(Caffe)、图像分割(PyTorch)](https://github.com/frombeijingwithlove/dlcv_for_beginners/tree/master/random_bonus)  
