@@ -10,7 +10,7 @@ pool1 = mx.symbol.Pooling(data=conv1, pool_type="max",
                           kernel=(2, 2), stride=(2, 2))
 # 2nd conv
 conv2 = mx.symbol.Convolution(data=pool1, kernel=(5, 5), num_filter=50)
-pool2 = mx.symbol.Pooling(data=conv1, pool_type="max",
+pool2 = mx.symbol.Pooling(data=conv2, pool_type="max",
                           kernel=(2, 2), stride=(2, 2))
 # 1st fc & relu
 flatten = mx.symbol.Flatten(data=pool2)
