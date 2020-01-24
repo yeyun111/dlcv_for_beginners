@@ -9,6 +9,7 @@ https://www.zhihu.com/question/20507061/answer/120540926
 本repo预计不会再更新(坦白讲本书后半部分内容已过时)，如实在有问题请给我本人github私信：yeyun11  
 
 祝各位春节快乐，2020年除夕
+
 ===
 ![封面](https://raw.githubusercontent.com/frombeijingwithlove/dlcv_book_pretrained_caffe_models/master/fm.jpg)
 
