@@ -10,7 +10,9 @@ https://www.zhihu.com/question/20507061/answer/120540926
 
 祝各位春节快乐，2020年除夕
 
-===
+_
+=== 
+
 ![封面](https://raw.githubusercontent.com/frombeijingwithlove/dlcv_book_pretrained_caffe_models/master/fm.jpg)
 
 原名《深度学习与计算机视觉：实例入门》，请注意：**这本书定位是入门书**。
